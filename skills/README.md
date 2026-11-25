@@ -16,6 +16,7 @@ konfirmasi, dan capability guard. Tidak termasuk training/render berat.
 | `build_dataset.py` | Buat dataset skill dari dataset utama |
 | `asisten-ringan/dataset.jsonl` | 190 contoh khusus skill ini |
 | `asisten-ringan/train.ipynb` | Notebook Colab untuk latih adapter skill |
+| `asisten-ringan/convert.ipynb` | Notebook konversi adapter skill → `skill-asisten-ringan.gguf` |
 
 ## Latih skill
 
@@ -23,8 +24,8 @@ konfirmasi, dan capability guard. Tidak termasuk training/render berat.
 2. Runtime → **T4 GPU**
 3. Run all
 4. Download `skill-asisten-ringan.zip`
-5. Konversi ke GGUF via `training/convert_limbo_colab.ipynb` (ganti nama output
-   jadi `skill-asisten-ringan.gguf`)
+5. Buka `skills/asisten-ringan/convert.ipynb` di Colab, upload `skill-asisten-ringan.zip`,
+   Run all → ter-download `skill-asisten-ringan.gguf`
 6. Taruh di `asisten-pc/adapter/skill-asisten-ringan.gguf`
 
 ## Pakai adapter skill
