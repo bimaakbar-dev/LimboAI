@@ -23,3 +23,7 @@ grokbot-src/
 hud_state.json
 workspace/
 *.log
+
+# Sisa percobaan Kaggle (sudah tidak dipakai)
+training/.kaggle_dataset/
+training/.kaggle_kernel/
