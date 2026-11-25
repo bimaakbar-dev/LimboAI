@@ -1,0 +1,30 @@
+{
+  "assistant_name": "Limbo",
+  "workspace": "workspace",
+  "allowed_roots": ["workspace"],
+  "confirm_destructive": true,
+  "dry_run_default": true,
+  "local": {
+    "enabled": true,
+    "base_url": "http://127.0.0.1:8080",
+    "timeout": 8,
+    "model_label": "qwen2.5-3b-instruct-q4_k_m.gguf",
+    "max_tokens": 512,
+    "temperature": 0.2
+  },
+  "cloud": {
+    "enabled": true,
+    "api_key_env": "GEMINI_API_KEY",
+    "model": "gemini-3.5-flash",
+    "grounding_model": "gemini-3.5-flash",
+    "fallback_models": ["gemini-3.8-flash"],
+    "timeout": 60,
+    "allow_image_upload": false
+  },
+  "limits": {
+    "max_file_read_bytes": 200000,
+    "max_list_items": 200,
+    "process_limit": 15,
+    "max_image_bytes": 10485760
+  }
+}

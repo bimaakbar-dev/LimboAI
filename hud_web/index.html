@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Limbo HUD</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
+    <div id="avatar"></div>
+  </div>
+
+  <section id="chat" class="hidden">
+    <div id="chatAvatar"></div>
+    <div id="log"></div>
+    <form id="form" autocomplete="off">
+      <input id="input" type="text" placeholder="Kirim pesan…">
+      <button type="submit" aria-label="Kirim">➤</button>
+    </form>
+  </section>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

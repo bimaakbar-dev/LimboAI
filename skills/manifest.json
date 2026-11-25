@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "skills": {
+    "asisten-ringan": {
+      "description": "Tool ringan: spec PC, disk, folder, file, hash, duplikat, proses, internet, konfirmasi, capability guard.",
+      "always": true,
+      "keywords": [
+        "spec", "spesifikasi", "disk", "storage", "ruang",
+        "folder", "direktori", "isi folder", "daftar file",
+        "file", "baca", "hash", "duplikat",
+        "proses", "cpu tertinggi", "internet", "koneksi",
+        "rename", "pindah", "copy", "csv", "konfirmasi",
+        "latih", "training", "render", "berat", "tidak bisa", "guard"
+      ],
+      "dataset": "asisten-ringan/dataset.jsonl",
+      "adapter": "adapter/skill-asisten-ringan.gguf"
+    }
+  }
+}

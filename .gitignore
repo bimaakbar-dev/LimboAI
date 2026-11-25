@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+
+# Rahasia / environment
+.env
+*.key
+kaggle.json
+access_token
+
+# Binary besar & hasil unduhan (jangan masuk git)
+models/
+llama/
+adapter/
+*.gguf
+*.safetensors
+*.zip
+
+# Source referensi pihak ketiga (engine sudah disalin ke hud_web/vendor/)
+grokbot-src/
+
+# State runtime & artefak
+hud_state.json
+workspace/
+*.log
