@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from core.assistant import Assistant  # noqa: E402
-from core.cloud_brain import CloudBrain, CloudUnavailable  # noqa: E402
-from core.local_brain import build_plan_system  # noqa: E402
+from brain.cloud_bridge import CloudBridge, CloudUnavailable  # noqa: E402
+from brain.local_llm import build_plan_system  # noqa: E402
 from core.router import match_tool  # noqa: E402
 from core.tool_descriptions import TOOL_DESCRIPTIONS  # noqa: E402
 from pipeline.metadata import normalize_row, parse_json_response  # noqa: E402
@@ -125,7 +125,7 @@ class SmokeTests(unittest.TestCase):
         self.assertIn("get_specs", text)
 
     def test_upload_gambar_default_nonaktif(self) -> None:
-        cloud = CloudBrain(
+        cloud = CloudBridge(
             {"enabled": True, "api_key_env": "GEMINI_API_KEY", "allow_image_upload": False},
             "", {},
         )

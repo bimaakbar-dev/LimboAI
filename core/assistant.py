@@ -4,13 +4,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .cloud_brain import CloudBrain, CloudUnavailable
-from .local_brain import LocalBrain, LocalUnavailable
 from .router import Router, extract_path, match_tool
 from .tool_descriptions import TOOL_DESCRIPTIONS
 from .spec_guard import SpecGuard
-from brain.cloud_bridge import CloudBridge
-from brain.local_llm import LocalLLM
+from brain.cloud_bridge import CloudBridge, CloudUnavailable
+from brain.local_llm import LocalLLM, LocalUnavailable
 from brain.router import BrainRouter
 from hud_state import set_state as set_hud_state
 from skills.registry import select_skill

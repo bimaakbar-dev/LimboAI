@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from core.local_brain import build_plan_system  # noqa: E402
+from brain.local_llm import build_plan_system  # noqa: E402
 from core.spec_guard import SpecGuard
 from core.tool_descriptions import TOOL_DESCRIPTIONS
 

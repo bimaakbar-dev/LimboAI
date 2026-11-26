@@ -1,107 +1,169 @@
 # Limbo — Desktop AI Companion
 
-AI pribadi yang berjalan di PC ini. Target: asisten ringan, avatar melayang, tanpa kerja berat.
+Asisten pribadi yang jalan di PC ber-spesifikasi rendah. Otak kecil di lokal,
+tugas berat dieskalasi ke AI cloud gratis. Avatar melayang di desktop.
 
-## Spesifikasi PC
-Intel Core i5-3570 (4 core) · RAM 16 GB · NVIDIA GT 710 2 GB · Windows 10 64-bit.
+---
 
-## Menjalankan
+## 1. Spesifikasi & batasan (wajib dipatuhi)
 
-```powershell
-JALANKAN_OTAK_LOKAL.bat   # opsional: llama-server + LoRA di port 8080
-JALANKAN_LIMBO_HUD.bat    # avatar companion + chat
+| Komponen | Nilai | Aturan |
+|---|---|---|
+| CPU | i5-3570, 4 core, AVX (tanpa AVX2) | CPU-only |
+| RAM | 16 GB DDR3 | Model lokal maks 2,5 GB |
+| GPU | GT 710 2 GB | **Tidak dipakai**, `n_gpu_layers=0` |
+| OS | Windows 10 64-bit | — |
+
+Dilarang: CUDA, torch, tensorflow, model >3B, model vision/generatif lokal.
+
+---
+
+## 2. Cara pakai (paling penting)
+
+### A. Nyalakan otak lokal (opsional tapi disarankan)
 ```
+JALANKAN_OTAK_LOKAL.bat
+```
+Memuat `qwen2.5-3b-instruct-q4_k_m.gguf` + adapter LoRA di port **8080**, CPU-only.
 
-CLI teks:
-```powershell
+### B. Nyalakan avatar + chat
+```
+JALANKAN_LIMBO_HUD.bat
+```
+Jendela transparan tanpa border, selalu di atas desktop.
+
+### C. CLI teks (tanpa avatar)
+```
 python asisten.py
 ```
 
-## Struktur utama
+Perintah di CLI: `/spec`, `/status`, `/mode auto|local|cloud`, `/help`, `exit`.
 
-| File | Fungsi |
+---
+
+## 3. Perilaku avatar
+
+| Kondisi | Posisi |
 |---|---|
-| `asisten.py` | CLI asisten |
-| `core/assistant.py` | Orkestrator + capability guard + skill selector |
-| `core/router.py` | Tool -> lokal -> cloud |
-| `core/local_brain.py` | Client llama.cpp |
-| `core/cloud_brain.py` | Gemini API (fallback) |
-| `hud_qt.py` | PyQt6 frameless + transparan + drag + Esc + auto-close |
-| `hud_server.py` | `/api/chat`, `/api/state`, `/api/status`, `/api/layout` |
-| `hud_state.py` | Jembatan status AI -> avatar |
-| `hud_web/` | Avatar + chat (engine GrokBot asli dari ZIP kamu) |
-| `grokbot-src/` | Source `grokbot-animation-anatomy-main.zip` |
-| `skills/` | Skill pattern |
-| `training/` | Dataset + notebook Colab |
-| `adapter/` | `limbo-lora.gguf`, `limbo-lora/` |
-| `models/` | `qwen2.5-3b-instruct-q4_k_m.gguf` |
-| `llama/` | llama.cpp binaries |
+| Desktop kosong (Win+D) | Besar di tengah |
+| Ada aplikasi terbuka | Kecil di kanan atas |
 
-## Avatar
+- Klik avatar (tanpa drag) → buka chat
+- Drag → pindah posisi
+- Tutup chat: klik avatar lagi / klik luar / **Esc**
+- Warna: hitam + putih, glow biru **hanya di avatar**
+- Chatbox: satu frame rounded putih, aksen hitam, isi: avatar → bubble → textbox
+- Animasi mengikuti **status AI**, bukan diputar acak
 
-- Body hitam, mata putih, **glow biru tipis hanya di avatar**
-- Mengikuti **status AI**, bukan diputar bergiliran
-- Desktop kosong (Win+D): besar di tengah · Ada aplikasi: kecil di kanan atas
-- Klik avatar = buka chat · Drag = pindah · Esc / klik luar = tutup
+---
 
-## Chatbox
-
-Satu frame rounded putih, aksen hitam, berisi:
-```
-avatar
-bubble percakapan
-textbox + tombol kirim
-```
-Tanpa panel setting.
-
-## Otak AI (Hybrid Local-Cloud)
-
-Sesuai batasan hardware: **CPU-only**, `n_gpu_layers=0`, GGUF 1B–3B Q4_K_M, tanpa torch/CUDA.
+## 4. Struktur folder
 
 ```
-brain/
-├── local_llm.py    → llama-server CPU-only (1B–3B GGUF)
-├── cloud_bridge.py → Gemini + Groq (free tier)
-└── router.py       → lokal untuk ringan, cloud untuk penalaran/info terbaru
+asisten-pc/
+├─ README.md              ← kamu sedang baca ini
+├─ config.json            model, timeout, mode, API
+├─ PERSONA.md             identitas & aturan Limbo
+├─ .env.example           template GEMINI_API_KEY + GROQ_API_KEY
+├─ requirements.txt       SDK cloud (opsional, ringan)
+├─ asisten.py             CLI
+├─ hud_qt.py              Desktop companion (PyQt6 WebEngine)
+├─ hud_server.py          API lokal: /api/chat, /api/state, /api/status
+├─ hud_state.py           jembatan status AI → avatar
+├─ hud_web/               avatar + chat (engine GrokBot asli)
+│  └─ vendor/             grok-player.js + grok-recipes.json
+├─ brain/                 OTAK AI
+│  ├─ local_llm.py        llama.cpp CPU-only
+│  ├─ cloud_bridge.py     Gemini + Groq (free tier)
+│  └─ router.py           lokal vs cloud
+├─ core/
+│  ├─ assistant.py        orkestrator + skill selector
+│  ├─ spec_guard.py       capability guard
+│  ├─ tool_descriptions.py
+│  └─ router.py           deteksi tool (regex)
+├─ tools/                 file & system tool
+├─ skills/                sistem skill
+├─ colab_training/        latih router spesialis
+├─ training/              latih adapter asisten & skill
+├─ pipeline/              metadata stock (DI-HOLD)
+├─ tests/                 13 tes otomatis
+├─ models/                GGUF (diabaikan git)
+├─ llama/                 binary llama.cpp (diabaikan git)
+├─ adapter/               hasil LoRA (diabaikan git)
+└─ grokbot-src/           source ZIP (diabaikan git)
 ```
 
-`core/assistant.py` memakai `brain/` sebagai otak utama. Cloud otomatis memilih Groq
-jika `GROQ_API_KEY` ada, kalau tidak Gemini.
+---
 
-Router spesialis dilatih dari `colab_training/dataset.jsonl` (115 contoh intent+route)
-lewat `colab_training/finetune_router.ipynb` di Colab T4.
+## 5. Alur otak
 
-## Skill pattern
+```
+Input
+  ↓
+brain/router.py → ringan? lokal : berat? cloud
+  ↓                         ↓
+LocalLLM (CPU)        CloudBridge (Gemini/Groq)
+  ↓                         ↓
+JSON tool call        jawaban/escalation
+  ↓
+core/assistant.py → tool / skill / jawaban
+  ↓
+hud_state.json → avatar berubah state
+```
+
+Cloud memakai **Groq** kalau `GROQ_API_KEY` ada, otherwise **Gemini**.
+
+---
+
+## 6. Training (semua di Google Colab, gratis, T4)
+
+| Kebutuhan | Notebook |
+|---|---|
+| Latih otak router | `colab_training/finetune_router.ipynb` |
+| Latih adapter asisten | `training/train_lora_colab.ipynb` |
+| Latih skill ringan | `skills/asisten-ringan/train.ipynb` |
+| Konversi → GGUF | `training/convert_limbo_colab.ipynb` atau `skills/asisten-ringan/convert.ipynb` |
+
+Cara umum: buka notebook di Colab → Runtime → T4 GPU → Run all → download `.zip` →
+konversi → taruh `.gguf` di `adapter/`.
+
+Dataset sudah tertanam di notebook, tidak perlu upload manual.
+
+---
+
+## 7. Skill
 
 `core/assistant.py` memilih skill lewat `skills/registry.py` sebelum menjawab.
 
-Skill pertama: **`asisten-ringan`** — file/folder, disk, proses, hash, duplikat,
-konfirmasi, capability guard. Detail: `skills/README.md`.
+Skill aktif: **`asisten-ringan`** (file/folder, disk, proses, hash, duplikat, guard).
+Detail di `skills/README.md`.
 
-```powershell
-python skills/build_dataset.py
-python training/make_colab_notebook.py --dataset skills/asisten-ringan/dataset.jsonl --out skills/asisten-ringan/train.ipynb --name skill-asisten-ringan
-```
+---
 
-## Latih model
-
-Training membersihkan perilaku via LoRA di Google Colab (T4 gratis, tanpa kartu kredit).
-Detail: `training/README.md`.
-
-```powershell
-python training/generate_dataset.py
-python training/make_colab_notebook.py
-```
-
-## Produksi microstock
-
-Pipeline metadata (`metadata.py`) **di-hold** sesuai permintaan.
-
-## Auto-start
+## 8. Auto-start
 
 Belum dipasang. Setelah semua final:
-```powershell
+```
 powershell -ExecutionPolicy Bypass -File PASANG_AUTOSTART.ps1
 ```
 
-Catatan: API key Kaggle yang pernah dibagikan di chat sebaiknya diregenerate.
+---
+
+## 9. Troubleshooting
+
+| Gejala | Penyebab | Solusi |
+|---|---|---|
+| Mode lokal gagal | `llama-server` tidak jalan | Jalankan `JALANKAN_OTAK_LOKAL.bat` |
+| `timeout` di lokal | CPU lambat | `config.json` → `local.timeout = 60` |
+| Cloud 429 | Kuota habis | Pakai Groq gratis atau tunggu |
+| Avatar tidak muncul | HUD mati | Jalankan `JALANKAN_LIMBO_HUD.bat` |
+| Chat input tidak bisa diklik | mode drag aktif | Tutup & buka chat lagi |
+
+---
+
+## 10. Backup
+
+Jangan commit `models/`, `llama/`, `adapter/`, token/API key — semuanya sudah ada di `.gitignore`.
+Gunakan GitHub Releases / Git LFS kalau mau backup bobot model.
+
+Repository: https://github.com/bimaakbar-dev/LimboAI

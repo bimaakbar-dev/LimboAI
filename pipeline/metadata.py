@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from core.cloud_brain import CloudBrain, CloudUnavailable
+from brain.cloud_bridge import CloudBridge, CloudUnavailable
 from tools.files import FileTools
 
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
@@ -83,7 +83,7 @@ def normalize_row(data: dict[str, Any], filename: str) -> dict[str, str]:
 
 
 class MetadataPipeline:
-    def __init__(self, config: dict, cloud: CloudBrain, files: FileTools):
+    def __init__(self, config: dict, cloud: CloudBridge, files: FileTools):
         self.cloud = cloud
         self.files = files
         self.max_bytes = int(config.get("limits", {}).get("max_image_bytes", 10485760))

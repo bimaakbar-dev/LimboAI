@@ -11,7 +11,7 @@ import json
 import sys
 from pathlib import Path
 
-from core.cloud_brain import CloudBrain
+from brain.cloud_bridge import CloudBridge
 from pipeline.metadata import MetadataPipeline
 from tools.files import FileTools
 from tools.system import SystemTools
@@ -48,7 +48,7 @@ def main() -> None:
         config["cloud"]["grounding_model"] = args.model
     persona = (ROOT / "PERSONA.md").read_text(encoding="utf-8")
     specs = SystemTools(config).get_specs()["data"]
-    cloud = CloudBrain(config.get("cloud", {}), persona, specs)
+    cloud = CloudBridge(config.get("cloud", {}), persona, specs)
     files = FileTools(config, ROOT)
     pipeline = MetadataPipeline(config, cloud, files)
 
