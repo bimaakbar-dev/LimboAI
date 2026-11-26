@@ -7,9 +7,9 @@
   "local": {
     "enabled": true,
     "base_url": "http://127.0.0.1:8080",
-    "timeout": 8,
+    "timeout": 60,
     "model_label": "qwen2.5-3b-instruct-q4_k_m.gguf",
-    "max_tokens": 512,
+    "max_tokens": 256,
     "temperature": 0.2
   },
   "cloud": {

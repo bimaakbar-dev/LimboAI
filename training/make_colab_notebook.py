@@ -28,6 +28,10 @@ def main() -> None:
     parser.add_argument("--dataset", default=str(HERE / "dataset.jsonl"))
     parser.add_argument("--out", default=str(HERE / "train_lora_colab.ipynb"))
     parser.add_argument("--name", default="limbo-lora")
+    parser.add_argument(
+        "--system",
+        default="Kamu adalah asisten PC. Balas HANYA JSON valid dengan kunci tool, args, dan answer.",
+    )
     args = parser.parse_args()
 
     raw = Path(args.dataset).read_bytes()
@@ -170,7 +174,7 @@ model.save_pretrained(OUT)
 tokenizer.save_pretrained(OUT)
 print("Adapter tersimpan:", OUT)
 
-system = "Kamu adalah asisten PC. Balas HANYA JSON valid dengan kunci tool, args, dan answer."
+system = {json.dumps(args.system)}
 prompt = tokenizer.apply_chat_template(
     [
         {{"role": "system", "content": system}},

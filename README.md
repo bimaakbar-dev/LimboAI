@@ -54,6 +54,23 @@ textbox + tombol kirim
 ```
 Tanpa panel setting.
 
+## Otak AI (Hybrid Local-Cloud)
+
+Sesuai batasan hardware: **CPU-only**, `n_gpu_layers=0`, GGUF 1B–3B Q4_K_M, tanpa torch/CUDA.
+
+```
+brain/
+├── local_llm.py    → llama-server CPU-only (1B–3B GGUF)
+├── cloud_bridge.py → Gemini + Groq (free tier)
+└── router.py       → lokal untuk ringan, cloud untuk penalaran/info terbaru
+```
+
+`core/assistant.py` memakai `brain/` sebagai otak utama. Cloud otomatis memilih Groq
+jika `GROQ_API_KEY` ada, kalau tidak Gemini.
+
+Router spesialis dilatih dari `colab_training/dataset.jsonl` (115 contoh intent+route)
+lewat `colab_training/finetune_router.ipynb` di Colab T4.
+
 ## Skill pattern
 
 `core/assistant.py` memilih skill lewat `skills/registry.py` sebelum menjawab.

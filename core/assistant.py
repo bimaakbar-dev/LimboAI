@@ -9,6 +9,9 @@ from .local_brain import LocalBrain, LocalUnavailable
 from .router import Router, extract_path, match_tool
 from .tool_descriptions import TOOL_DESCRIPTIONS
 from .spec_guard import SpecGuard
+from brain.cloud_bridge import CloudBridge
+from brain.local_llm import LocalLLM
+from brain.router import BrainRouter
 from hud_state import set_state as set_hud_state
 from skills.registry import select_skill
 from pipeline.metadata import MetadataPipeline
@@ -30,10 +33,11 @@ class Assistant:
         self.files = FileTools(self.cfg, self.root)
 
         self.guard = SpecGuard(self.specs)
-        self.local = LocalBrain(self.cfg.get("local", {}), persona)
-        self.cloud = CloudBrain(self.cfg.get("cloud", {}), persona, self.specs)
+        self.local = LocalLLM(self.cfg.get("local", {}), persona)
+        self.cloud = CloudBridge(self.cfg.get("cloud", {}), persona, self.specs)
         self.metadata = MetadataPipeline(self.cfg, self.cloud, self.files)
         self.router = Router(self.local, self.cloud)
+        self.brain_router = BrainRouter(self.local, self.cloud)
 
         self.mode = "auto"  # auto | local | cloud
         self.active_skill = "core"
@@ -195,7 +199,16 @@ class Assistant:
             self.last_route = "local_llm"
             return self._fallback_answer(text, {"route": "local_llm"})
 
-        decision = self.router.decide(text, guard_result)
+        brain = self.brain_router.decide(text)
+        if brain["target"] == "cloud":
+            decision = {"route": "cloud", "fresh": "penalaran" in brain["reason"]}
+        elif brain["target"] == "local":
+            decision = {"route": "local_llm"}
+        else:
+            decision = {
+                "route": "offline",
+                "message": "Otak lokal dan cloud tidak tersedia.",
+            }
         self.last_route = decision["route"]
         if decision["route"] in {"cloud", "local_llm"}:
             return self._fallback_answer(text, decision)

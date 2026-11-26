@@ -1,0 +1,6 @@
+# Dependensi ringan. Inference lokal memakai llama.cpp (bukan torch).
+# SDK di bawah opsional: runtime kita memakai urllib stdlib, tapi disertakan
+# sesuai arsitektur cloud bridge.
+google-genai>=1.0
+groq>=0.9
+python-dotenv>=1.0
